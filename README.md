@@ -2,7 +2,7 @@
 
 a cute and shiny logger inspired by signale
 
-![screenshot](.github/assets/scrot.png)
+![screenshot](./scrot.png)
 
 ## 🖥️ use
 
