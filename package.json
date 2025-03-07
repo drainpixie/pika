@@ -1,18 +1,27 @@
 {
-	"name": "pika",
-	"version": "1.0.0",
-	"type": "module",
-	"description": "a cute and shiny logger",
-	"license": "LGPL-3.0",
-	"scripts": {
-		"build": "tsup",
-		"fmt": "biome check --vcs-client-kind=git --vcs-root=. --vcs-enabled=true --vcs-use-ignore-file=true"
-	},
-	"devDependencies": {
-		"@types/node": "^22.13.9",
-		"tsup": "^8.4.0"
-	},
-	"pnpm": {
-		"onlyBuiltDependencies": ["esbuild"]
-	}
+  "name": "pika",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "a cute and shiny logger",
+  "license": "LGPL-3.0",
+  "files": "dist",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "scripts": {
+    "build": "tsup",
+    "fmt": "biome check --vcs-client-kind=git --vcs-root=. --vcs-enabled=true --vcs-use-ignore-file=true"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "tsup": "^8.4.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
 }
