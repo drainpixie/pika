@@ -1,0 +1,20 @@
+# dependencies
+node_modules
+dist
+yarn.lock
+
+# logs
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# nix
+.direnv/
+.pre-commit-config.yaml
