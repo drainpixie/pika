@@ -9,7 +9,7 @@ a cute and shiny logger inspired by signale
 ```sh
 $ mkdir vendor
 $ git clone https://git.sr.ht/~pixie/pik vendor/pika
-$ pnpm add vendor/pika
+$ pnpm add ./vendor/pika
 ```
 
 ```ts
