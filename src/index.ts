@@ -165,3 +165,4 @@ export class Pika {
 }
 
 export const pika = (options: Partial<PikaOptions> = {}) => new Pika(options);
+export * from "./types";
