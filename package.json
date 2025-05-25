@@ -1,5 +1,5 @@
 {
-	"name": "@pixie/pika",
+	"name": "@drainpixie/pika",
 	"version": "1.0.1",
 	"type": "module",
 	"description": "a cute and shiny logger",

@@ -7,11 +7,11 @@ a cute and shiny logger inspired by signale
 ## 🖥️ use
 
 ```sh
-$ pnpm add @pixie/pika
+$ pnpm add @drainpixie/pika
 ```
 
 ```ts
-import { pika, Level } from "@pixie/pika";
+import { pika, Level } from "@drainpixie/pika";
 
 const logger = pika()
   .scope("main")
