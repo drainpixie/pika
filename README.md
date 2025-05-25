@@ -7,13 +7,11 @@ a cute and shiny logger inspired by signale
 ## 🖥️ use
 
 ```sh
-$ mkdir vendor
-$ git clone https://git.sr.ht/~pixie/pik vendor/pika
-$ pnpm add ./vendor/pika
+$ pnpm add @pixie/pika
 ```
 
 ```ts
-import { pika, Level } from "pika";
+import { pika, Level } from "@pixie/pika";
 
 const logger = pika()
   .scope("main")
@@ -59,13 +57,3 @@ try {
 $ nix develop
 $ pnpm install
 ```
-
-<details>
-  <summary>dependencies for contributors</summary>
-  
-  ```sh
-  cargo install --locked koji
-  corepack use pnpm
-  ```
-
-</details>

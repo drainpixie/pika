@@ -1,27 +1,32 @@
 {
-  "name": "pika",
-  "version": "1.0.1",
-  "type": "module",
-  "description": "a cute and shiny logger",
-  "license": "LGPL-3.0",
-  "files": "dist",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
-  },
-  "scripts": {
-    "build": "tsup",
-    "fmt": "biome check --vcs-client-kind=git --vcs-root=. --vcs-enabled=true --vcs-use-ignore-file=true"
-  },
-  "devDependencies": {
-    "@types/node": "^22.13.9",
-    "tsup": "^8.4.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  }
+	"name": "@pixie/pika",
+	"version": "1.0.1",
+	"type": "module",
+	"description": "a cute and shiny logger",
+	"license": "LGPL-3.0",
+	"files": ["dist", "package.json"],
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"import": "./dist/index.js",
+		"require": "./dist/index.cjs"
+	},
+	"scripts": {
+		"build": "tsup",
+		"prepack": "pnpm run build",
+		"fmt": "biome check --vcs-client-kind=git --vcs-root=. --vcs-enabled=true --vcs-use-ignore-file=true"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": ["logger", "json", "cute"],
+	"devDependencies": {
+		"@types/node": "^22.13.9",
+		"tsup": "^8.4.0"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": ["esbuild"]
+	}
 }

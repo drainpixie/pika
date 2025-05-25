@@ -30,6 +30,7 @@
             src = ./.;
             hooks = {
               biome.enable = true;
+              convco.enable = true;
               alejandra.enable = true;
             };
           };
