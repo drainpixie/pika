@@ -183,11 +183,7 @@ export class Pika {
     if (!error.stack) return error.message;
 
     const [name, ...stackLines] = error.stack.split("\n");
-
-    const coloredName = this.#applyColor(name, Colour.UNDERLINE);
-    const coloredStack = this.#applyColor(stackLines.join("\n"), Colour.GREY);
-
-    return `${coloredName}\n${coloredStack}`;
+    return `${this.#applyColor(name, Colour.UNDERLINE)}\n${this.#applyColor(stackLines.join("\n"), Colour.GREY)}`;
   }
 
   #formatObject(obj: Record<string, unknown>) {
