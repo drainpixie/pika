@@ -1,5 +1,8 @@
 import { WriteStream } from "node:tty";
 
+/**
+ * The available figures.
+ */
 export const Figure = {
   TICK: "✔",
   INFO: "ℹ",
@@ -9,6 +12,9 @@ export const Figure = {
   POINTER_SMALL: "›",
 } as const;
 
+/**
+ * The available colours.
+ */
 export const Colour = {
   RED: "\x1b[31m",
   BOLD: "\x1b[1m",
@@ -22,6 +28,9 @@ export const Colour = {
   UNDERLINE: "\x1b[4m",
 } as const;
 
+/**
+ * The available levels.
+ */
 export const Level = {
   TRACE: 0,
   DEBUG: 1,
@@ -31,8 +40,19 @@ export const Level = {
   FATAL: 5,
 } as const;
 
+/**
+ * The available figures.
+ */
 export type Figure = (typeof Figure)[keyof typeof Figure];
+
+/**
+ * The available colours.
+ */
 export type Colour = (typeof Colour)[keyof typeof Colour];
+
+/**
+ * The available levels.
+ */
 export type Level = (typeof Level)[keyof typeof Level];
 
 export type LogTypeName =

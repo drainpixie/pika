@@ -10,16 +10,39 @@ import {
 } from "./utils";
 import { fileURLToPath } from "node:url";
 
+/**
+ * The options for a Pika instance.
+ */
 export interface PikaOptions {
+  /**
+   * The scope of the logger.
+   */
   readonly scope: string;
+
+  /**
+   * The level of the logger.
+   */
   readonly level: Level;
+
+  /**
+   * The secrets to filter.
+   */
   readonly secrets: readonly string[];
-  readonly interactive: boolean;
+
+  /**
+   * Whether to use colors.
+   */
   readonly useColors: boolean;
 }
 
-export type PikaLogMethod = (...args: readonly unknown[]) => void;
+/**
+ * A Pika logger.
+ */
+type PikaLogMethod = (...args: readonly unknown[]) => void;
 
+/**
+ * A Pika logger.
+ */
 export class Pika {
   readonly #scope: string;
   readonly #level: Level;
@@ -27,6 +50,10 @@ export class Pika {
   readonly #useColors: boolean;
   readonly #secrets: readonly string[];
 
+  /**
+   * Creates a new instance of Pika.
+   * @param options The options for the instance.
+   */
   constructor(options: Partial<PikaOptions> = {}) {
     this.#scope = options.scope ?? this.#getFilename();
     this.#level = options.level ?? Level.INFO;
@@ -35,27 +62,46 @@ export class Pika {
     this.#useColors = options.useColors ?? shouldUseColors();
   }
 
-  scope(scope: string): Pika {
+  /**
+   * Clones the current instance with the given scope.
+   * @param scope The scope to set.
+   * @returns A new instance with the given scope.
+   */
+  scope(scope: string) {
     return new Pika({
       ...this.options,
       scope,
     });
   }
 
-  level(level: Level): Pika {
+  /**
+   * Clones the current instance with the given level.
+   * @param level The level to set.
+   * @returns A new instance with the given level.
+   */
+  level(level: Level) {
     return new Pika({
       ...this.options,
       level,
     });
   }
 
-  secrets(...secrets: readonly string[]): Pika {
+  /**
+   * Clones the current instance with the given secrets.
+   * @param secrets The secrets to add.
+   * @returns A new instance with the given secrets.
+   */
+  secrets(...secrets: readonly string[]) {
     return new Pika({
       ...this.options,
       secrets: [...this.#secrets, ...secrets],
     });
   }
 
+  /**
+   * Returns the current options.
+   * @returns The current options.
+   */
   get options(): Partial<PikaOptions> {
     return {
       scope: this.#scope,
@@ -65,7 +111,7 @@ export class Pika {
     };
   }
 
-  #getFilename(): string {
+  #getFilename() {
     const originalPrepareStackTrace = Error.prepareStackTrace;
 
     try {
@@ -96,7 +142,7 @@ export class Pika {
     }
   }
 
-  #getLongestLabel(): number {
+  #getLongestLabel() {
     return Math.max(
       ...Object.values(TYPES)
         .map((type) => type.label?.length ?? 0)
@@ -105,7 +151,7 @@ export class Pika {
     );
   }
 
-  #filterSecrets(input: string): string {
+  #filterSecrets(input: string) {
     if (this.#secrets.length === 0) return input;
 
     return this.#secrets.reduce(
@@ -114,11 +160,11 @@ export class Pika {
     );
   }
 
-  #formatScope(): string {
+  #formatScope() {
     return `[${this.#scope}]`;
   }
 
-  #getMeta(): readonly string[] {
+  #getMeta() {
     const meta = [this.#formatScope()];
 
     if (meta.length > 0) {
@@ -129,7 +175,7 @@ export class Pika {
     return meta;
   }
 
-  #applyColor(text: string, ...colors: Colour[]): string {
+  #applyColor(text: string, ...colors: Colour[]) {
     return this.#useColors ? colour(text, ...colors) : text;
   }
 
@@ -189,6 +235,11 @@ export class Pika {
     );
   }
 
+  /**
+   * Clones the current instance with the given options.
+   * @param overrides The options to override.
+   * @returns A new instance with the given options.
+   */
   clone(overrides: Partial<PikaOptions> = {}): Pika {
     return new Pika({
       ...this.options,
@@ -206,5 +257,10 @@ export class Pika {
   readonly info: PikaLogMethod = (...args) => this.#log(TYPES.info, ...args);
 }
 
+/**
+ * Creates a new instance of Pika.
+ * @param options The options for the instance.
+ * @returns A new instance of Pika.
+ */
 export const pika = (options: Partial<PikaOptions> = {}) => new Pika(options);
 export * from "./utils";
