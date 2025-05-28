@@ -1,77 +1,86 @@
-export enum Figure {
-  TICK = "✔",
-  INFO = "ℹ",
-  CROSS = "✖",
-  WARNING = "⚠",
-  ELLIPSIS = "…",
-  POINTER_SMALL = "›",
-}
+import { WriteStream } from "node:tty";
 
-export enum Colour {
-  RED = "\x1b[31m",
-  BOLD = "\x1b[1m",
-  GREY = "\x1b[38m",
-  BLUE = "\x1b[34m",
-  CYAN = "\x1b[36m",
-  RESET = "\x1b[0m",
-  GREEN = "\x1b[32m",
-  YELLOW = "\x1b[33m",
-  MAGENTA = "\x1b[35m",
-  UNDERLINE = "\x1b[4m",
-}
+export const Figure = {
+  TICK: "✔",
+  INFO: "ℹ",
+  CROSS: "✖",
+  WARNING: "⚠",
+  ELLIPSIS: "…",
+  POINTER_SMALL: "›",
+} as const;
 
-export enum Level {
-  TRACE = 0,
-  DEBUG = 1,
-  INFO = 2,
-  WARN = 3,
-  ERROR = 4,
-  FATAL = 5,
-}
+export const Colour = {
+  RED: "\x1b[31m",
+  BOLD: "\x1b[1m",
+  GREY: "\x1b[90m",
+  BLUE: "\x1b[34m",
+  CYAN: "\x1b[36m",
+  RESET: "\x1b[0m",
+  GREEN: "\x1b[32m",
+  YELLOW: "\x1b[33m",
+  MAGENTA: "\x1b[35m",
+  UNDERLINE: "\x1b[4m",
+} as const;
+
+export const Level = {
+  TRACE: 0,
+  DEBUG: 1,
+  INFO: 2,
+  WARN: 3,
+  ERROR: 4,
+  FATAL: 5,
+} as const;
+
+export type Figure = (typeof Figure)[keyof typeof Figure];
+export type Colour = (typeof Colour)[keyof typeof Colour];
+export type Level = (typeof Level)[keyof typeof Level];
+
+export type LogTypeName =
+  | "success"
+  | "warn"
+  | "error"
+  | "fatal"
+  | "trace"
+  | "debug"
+  | "info";
 
 export interface LogType {
-  label: string;
-  level: Level;
-  badge: Figure | string;
-  colour: Colour;
-  stream: NodeJS.WriteStream;
+  readonly label: string;
+  readonly level: Level;
+  readonly badge: Figure | string;
+  readonly colour: Colour;
+  readonly stream: WriteStream | NodeJS.WriteStream;
 }
 
-const _mk = (
+const createLogType = (
   label: LogType["label"],
   level: LogType["level"],
   badge: LogType["badge"],
   colour: LogType["colour"],
   stream: LogType["stream"] = process.stdout,
-): LogType => ({ label, level, badge, colour, stream });
+): LogType => Object.freeze({ label, level, badge, colour, stream });
 
-export const isColour = (input: any): input is Colour =>
-  Object.values(Colour).includes(input);
-
-export function colour(input: string, ...colours: Colour[]): string {
-  if (typeof input !== "string")
-    throw new TypeError(
-      `Invalid input: expected a string, received ${typeof input}`,
-    );
-
-  const valid = colours.filter((x) => {
-    if (!isColour(x)) {
-      console.warn(`Invalid colour: ${x} is not a valid \`Colour\` enum value`);
-      return false;
-    }
-
-    return true;
-  });
-
-  return `${valid.join("")}${input}${Colour.RESET}`;
-}
+export const colour = (input: string, ...colours: readonly Colour[]): string =>
+  `${colours.join("")}${input}${Colour.RESET}`;
 
 export default {
-  success: _mk("success", Level.INFO, Figure.TICK, Colour.GREEN),
-  warn: _mk("warn", Level.WARN, Figure.WARNING, Colour.YELLOW),
-  error: _mk("error", Level.ERROR, Figure.CROSS, Colour.RED, process.stderr),
-  fatal: _mk("fatal", Level.FATAL, Figure.CROSS, Colour.RED, process.stderr),
-  trace: _mk("trace", Level.TRACE, Figure.ELLIPSIS, Colour.BLUE),
-  debug: _mk("debug", Level.DEBUG, Figure.INFO, Colour.RED),
-  info: _mk("info", Level.INFO, Figure.INFO, Colour.BLUE),
-} satisfies Record<LogType["label"], LogType>;
+  success: createLogType("success", Level.INFO, Figure.TICK, Colour.GREEN),
+  warn: createLogType("warn", Level.WARN, Figure.WARNING, Colour.YELLOW),
+  error: createLogType(
+    "error",
+    Level.ERROR,
+    Figure.CROSS,
+    Colour.RED,
+    process.stderr,
+  ),
+  fatal: createLogType(
+    "fatal",
+    Level.FATAL,
+    Figure.CROSS,
+    Colour.RED,
+    process.stderr,
+  ),
+  trace: createLogType("trace", Level.TRACE, Figure.ELLIPSIS, Colour.BLUE),
+  debug: createLogType("debug", Level.DEBUG, Figure.INFO, Colour.CYAN),
+  info: createLogType("info", Level.INFO, Figure.INFO, Colour.BLUE),
+} as const satisfies Record<LogTypeName, LogType>;
