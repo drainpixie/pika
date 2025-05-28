@@ -1,6 +1,6 @@
 {
   "name": "@drainpixie/pika",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "type": "module",
   "description": "a cute and shiny logger",
   "license": "LGPL-3.0",
