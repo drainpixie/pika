@@ -1,8 +1,6 @@
-# ✨ pik**a** ぴか
+# ✨ pika ぴか
 
 a cute and shiny logger inspired by signale
-
-![screenshot](./scrot.png)
 
 ## 🖥️ use
 
