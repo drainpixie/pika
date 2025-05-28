@@ -6,7 +6,8 @@ import {
   type LogType,
   default as TYPES,
   colour,
-} from "./types";
+  shouldUseColors,
+} from "./utils";
 import { fileURLToPath } from "node:url";
 
 export interface PikaOptions {
@@ -14,6 +15,7 @@ export interface PikaOptions {
   readonly level: Level;
   readonly secrets: readonly string[];
   readonly interactive: boolean;
+  readonly useColors: boolean;
 }
 
 export type PikaLogMethod = (...args: readonly unknown[]) => void;
@@ -22,6 +24,7 @@ export class Pika {
   readonly #scope: string;
   readonly #level: Level;
   readonly #longest: number;
+  readonly #useColors: boolean;
   readonly #secrets: readonly string[];
 
   constructor(options: Partial<PikaOptions> = {}) {
@@ -29,6 +32,7 @@ export class Pika {
     this.#level = options.level ?? Level.INFO;
     this.#longest = this.#getLongestLabel();
     this.#secrets = Object.freeze([...(options.secrets ?? [])]);
+    this.#useColors = options.useColors ?? shouldUseColors();
   }
 
   scope(scope: string): Pika {
@@ -57,6 +61,7 @@ export class Pika {
       scope: this.#scope,
       level: this.#level,
       secrets: this.#secrets,
+      useColors: this.#useColors,
     };
   }
 
@@ -124,11 +129,19 @@ export class Pika {
     return meta;
   }
 
+  #applyColor(text: string, ...colors: Colour[]): string {
+    return this.#useColors ? colour(text, ...colors) : text;
+  }
+
   #formatError(error: Error) {
     if (!error.stack) return error.message;
 
     const [name, ...stackLines] = error.stack.split("\n");
-    return `${colour(name, Colour.UNDERLINE)}\n${colour(stackLines.join("\n"), Colour.GREY)}`;
+
+    const coloredName = this.#applyColor(name, Colour.UNDERLINE);
+    const coloredStack = this.#applyColor(stackLines.join("\n"), Colour.GREY);
+
+    return `${coloredName}\n${coloredStack}`;
   }
 
   #formatObject(obj: Record<string, unknown>) {
@@ -141,9 +154,9 @@ export class Pika {
     const parts = [...this.#getMeta()];
     const { label, colour: typeColour, badge } = type;
 
-    parts.push(colour(`${badge} `, typeColour));
+    parts.push(this.#applyColor(`${badge} `, typeColour));
     parts.push(
-      `${colour(label, typeColour, Colour.UNDERLINE)}${" ".repeat(Math.max(0, this.#longest - label.length))}`,
+      `${this.#applyColor(label, typeColour, Colour.UNDERLINE)}${" ".repeat(Math.max(0, this.#longest - label.length))}`,
     );
 
     if (args.length === 0) return parts.join(" ");
@@ -158,11 +171,13 @@ export class Pika {
       !(first instanceof RegExp)
     )
       parts.push(this.#formatObject(first as Record<string, unknown>));
-    else {
-      const message = [first, ...rest].map((arg) => String(arg)).join(" ");
-
-      parts.push(colour(message, Colour.GREY));
-    }
+    else
+      parts.push(
+        this.#applyColor(
+          [first, ...rest].map((arg) => String(arg)).join(" "),
+          Colour.GREY,
+        ),
+      );
 
     return parts.join(" ");
   }
@@ -172,6 +187,13 @@ export class Pika {
     type.stream.write(
       `${this.#filterSecrets(this.#buildMessage(type, ...args))}\n`,
     );
+  }
+
+  clone(overrides: Partial<PikaOptions> = {}): Pika {
+    return new Pika({
+      ...this.options,
+      ...overrides,
+    });
   }
 
   readonly success: PikaLogMethod = (...args) =>
@@ -185,4 +207,4 @@ export class Pika {
 }
 
 export const pika = (options: Partial<PikaOptions> = {}) => new Pika(options);
-export * from "./types";
+export * from "./utils";

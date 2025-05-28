@@ -63,6 +63,13 @@ const createLogType = (
 export const colour = (input: string, ...colours: readonly Colour[]): string =>
   `${colours.join("")}${input}${Colour.RESET}`;
 
+export function shouldUseColors() {
+  if (process.env.NO_COLOR || process.env.NODE_DISABLE_COLORS) return false;
+  if (process.env.FORCE_COLOR) return true;
+
+  return process.stdout.isTTY ?? false;
+}
+
 export default {
   success: createLogType("success", Level.INFO, Figure.TICK, Colour.GREEN),
   warn: createLogType("warn", Level.WARN, Figure.WARNING, Colour.YELLOW),
