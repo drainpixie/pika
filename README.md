@@ -2,7 +2,7 @@
 
 a cute and shiny logger inspired by signale
 
-[!Screenshot](./ss.png)
+![Screenshot](./ss.png)
 
 ## 🖥️ use
 
