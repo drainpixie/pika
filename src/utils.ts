@@ -4,10 +4,10 @@ import { WriteStream } from "node:tty";
  * The available figures.
  */
 export const Figure = {
-  TICK: "✔",
-  INFO: "ℹ",
-  CROSS: "✖",
-  WARNING: "⚠",
+  TICK: "✓",
+  INFO: "i",
+  CROSS: "×",
+  WARNING: "!",
   ELLIPSIS: "…",
   POINTER_SMALL: "›",
 } as const;
@@ -18,7 +18,7 @@ export const Figure = {
 export const Colour = {
   RED: "\x1b[31m",
   BOLD: "\x1b[1m",
-  GREY: "\x1b[90m",
+  GREY: "\x1b[0;37m",
   BLUE: "\x1b[34m",
   CYAN: "\x1b[36m",
   RESET: "\x1b[0m",

@@ -2,6 +2,8 @@
 
 a cute and shiny logger inspired by signale
 
+[!Screenshot](./ss.png)
+
 ## 🖥️ use
 
 ```sh
