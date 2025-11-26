@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,39 +14,43 @@
   }: let
     supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
 
-    forEachSupportedSystem = f:
+    forAllSystems = f:
       nixpkgs.lib.genAttrs supportedSystems (system:
         f {
           pkgs = nixpkgs.legacyPackages.${system};
           inherit system;
         });
   in {
-    devShells = forEachSupportedSystem ({
+    devShells = forAllSystems ({
       pkgs,
       system,
-    }: {
+    }: let
+      check = self.checks.${system}.pre-commit;
+    in {
       default = pkgs.mkShell {
-        inherit (self.checks.${system}.pre-commit) shellHook;
+        inherit (check) shellHook;
 
-        packages =
-          builtins.attrValues {
-            inherit (pkgs.nodePackages) nodejs pnpm typescript typescript-language-server;
-          }
-          ++ self.checks.${system}.pre-commit.enabledPackages;
+        buildInputs =
+          check.enabledPackages
+          ++ (builtins.attrValues {
+            inherit (pkgs) nodejs;
+            inherit (pkgs.nodePackages) pnpm;
+          });
       };
     });
 
-    checks = forEachSupportedSystem ({
+    checks = forAllSystems ({
       pkgs,
       system,
     }: {
       pre-commit = hooks.lib.${system}.run {
         src = ./.;
+        package = pkgs.prek;
 
         hooks = {
           eslint = {
             enable = true;
-            entry = "pnpx eslint";
+            entry = "pnpm eslint";
             files = "\\.(ts|js|tsx|jsx)$";
           };
 
@@ -55,12 +59,13 @@
             excludes = ["flake.lock"];
           };
 
+          statix.enable = true;
           convco.enable = true;
           alejandra.enable = true;
         };
       };
     });
 
-    formatter = forEachSupportedSystem ({pkgs, ...}: pkgs.alejandra);
+    formatter = forAllSystems ({pkgs, ...}: pkgs.alejandra);
   };
 }
